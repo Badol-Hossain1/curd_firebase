@@ -1,29 +1,35 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
+import fireDb, { app, db } from "../firebase.config";
+import { ref, set } from "firebase/database";
 
-const initialState = {
-  name: "",
-  email: "",
-  contact: "",
-};
+
 
 const AddEdit = () => {
-  const [state, setState] = useState(initialState);
-  const [data, setData] = useState({});
-  const { name, email, contact } = state;
-  const handleInput = (e) => {
+    console.log(db)
 
-const {name,value} = e.target
-setState({...state,[name]:value})
-  };
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [contact, setContact] = useState('');
+  const [notifiy,setNotifiy] = useState('')
+
+
   const handleSubmit = (e) => {
-    e.preventDefault()
-    if(!name || !email || !contact){
-        toast.error('please provide value')
-    }
+    e.preventDefault();
+    const useRef = ref(db,'users/')
+    set(useRef,{
+        name: name,
+        email: email,
+        contact: contact
+    })
+    setNotifiy('data added')
+    
   };
   return (
     <div className="flex justify-center items-center mt-[50px]">
+      
       <form onSubmit={handleSubmit} className="w-full max-w-lg">
+          {notifiy}
         <div className="-mx-3 mb-6">
           <div className="w-full  px-3 mb-6 md:mb-0">
             <label
@@ -36,8 +42,9 @@ setState({...state,[name]:value})
               className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               id="name"
               type="text"
+              value={name}
               placeholder="name"
-              onChange={handleInput}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="w-full px-3">
@@ -51,8 +58,9 @@ setState({...state,[name]:value})
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="email"
               type="email"
+              value={email}
               placeholder="email"
-              onChange={handleInput}
+              onChange={(e)=> setEmail(e.target.value)}
             />
           </div>
         </div>
@@ -69,15 +77,14 @@ setState({...state,[name]:value})
               id="contact"
               type="number"
               placeholder="contact"
-              onChange={handleInput}
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
             />
-             <input
+            <input
               className="appearance-none block w-full text-white bg-blue-600  border border-gray-200 cursor-pointer rounded py-3 px-4 mb-3 leading-tight focus:outline-none  focus:border-gray-500"
               id="contact"
               type="submit"
-      
-              value='submit'
-   
+              value="submit"
             />
           </div>
         </div>
